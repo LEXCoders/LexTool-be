@@ -1,8 +1,10 @@
 import { Router } from 'express'
 import { jwtAuth } from '../middlewares/jwtAuth.js'
 import { isAdmin } from '../middlewares/isAdmin.js'
-import { forgetPasswordValidation } from '../validators/auth.js'
-import { editManagerProfileValidation } from '../validators/managers.js'
+import {
+  addManagerValidation,
+  editManagerProfileValidation
+} from '../validators/managers.js'
 import { validateRequestBody } from '../middlewares/validateRequestBody.js'
 import * as ManagersController from '../controllers/Managers.js'
 
@@ -14,7 +16,7 @@ router.post(
   '/',
   jwtAuth,
   isAdmin,
-  forgetPasswordValidation,
+  addManagerValidation,
   validateRequestBody,
   ManagersController.AddManager
 )

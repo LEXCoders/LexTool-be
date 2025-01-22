@@ -84,10 +84,22 @@ export const GetManager = async (req, res) => {
 
 export const AddManager = async (req, res) => {
   try {
-    const { email } = req.body
+    const { firstName, lastName, email } = req.body
+
+    const existingManager = await db.models.User.findOne({ where: { email } })
+
+    if (existingManager) {
+      return sendErrorResponse(
+        res,
+        StatusCodes.BAD_REQUEST,
+        'User with this email already'
+      )
+    }
 
     await db.models.User.create({
       email,
+      firstName,
+      lastName,
       password: null,
       isVerified: false
     })
