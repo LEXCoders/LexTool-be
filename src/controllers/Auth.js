@@ -226,3 +226,27 @@ export const UpdateProfile = async (req, res) => {
     )
   }
 }
+
+export const Me = async (req, res) => {
+  try {
+    const { email } = req
+
+    const userProfile = await db.models.User.findOne({
+      where: { email },
+      attributes: ['id', 'firstName', 'lastName', 'email', 'role']
+    })
+
+    if (!userProfile) {
+      return sendErrorResponse(res, StatusCodes.NOT_FOUND, 'User not found')
+    }
+
+    return res.status(StatusCodes.OK).json({ profile: userProfile })
+  } catch (e) {
+    console.error('[Me]', e)
+    return sendErrorResponse(
+      res,
+      StatusCodes.BAD_REQUEST,
+      'Error while getting profile information'
+    )
+  }
+}
