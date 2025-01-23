@@ -6,3 +6,9 @@ export const editManagerProfileValidation = [
   nameValidation('lastName').optional(),
   roleValidation().optional()
 ]
+
+export const addManagerValidation = [
+  emailValidation(),
+  nameValidation(),
+  nameValidation('lastName')
+]
