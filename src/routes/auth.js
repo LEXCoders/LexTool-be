@@ -64,4 +64,6 @@ router.patch(
   AuthController.UpdateProfile
 )
 
+router.get('/me', jwtAuth, AuthController.Me)
+
 export default router
