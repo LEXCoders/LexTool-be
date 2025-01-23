@@ -43,6 +43,10 @@ const modelDefiner = (sequelize) => {
       code: {
         type: DataTypes.STRING,
         allowNull: true
+      },
+      imageUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
       }
     },
     { tableName: 'user', timestamps: true }

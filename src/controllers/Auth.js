@@ -1,4 +1,6 @@
 import db from '../config/sequelize.js'
+import fs from 'fs'
+import path from 'path'
 import { hash, compare } from '../utils/password.js'
 import { sendErrorResponse } from '../utils/response.js'
 import { generateToken } from '../services/jwt.js'
@@ -195,6 +197,7 @@ export const UpdateProfile = async (req, res) => {
   try {
     const { email: currentEmail } = req
     const { email, firstName, lastName } = req.body
+    let imageUrl = ''
 
     const user = await db.models.User.findOne({
       where: { email: currentEmail }
@@ -204,10 +207,25 @@ export const UpdateProfile = async (req, res) => {
       return sendErrorResponse(res, StatusCodes.NOT_FOUND, 'User not found')
     }
 
+    if(req.file) {
+      imageUrl = `/uploads/profile-pics/${req.file.filename}`
+    }
+
+    const oldProfileImageUrl = path.join(process.cwd(), user.imageUrl)
+
+    if(user.imageUrl && fs.existsSync(oldProfileImageUrl)) {
+      try { 
+        fs.unlinkSync(oldProfileImageUrl)
+      } catch(e) {
+        console.error('[UpdateProfile] Error deleting user profile pic', e)
+      }
+    }
+
     Object.assign(user, {
       email: email ?? user.email,
       firstName: firstName ?? user.firstName,
-      lastName: lastName ?? user.lastName
+      lastName: lastName ?? user.lastName,
+      ...(imageUrl ? { imageUrl } : {})
     })
 
     const token = generateToken({ email: email ?? user.email })
