@@ -1,5 +1,4 @@
 import db from '../config/sequelize.js'
-import fs from 'fs'
 import path from 'path'
 import { hash, compare } from '../utils/password.js'
 import { sendErrorResponse } from '../utils/response.js'
@@ -8,6 +7,7 @@ import { StatusCodes } from 'http-status-codes'
 import { transporter } from '../services/mailer.js'
 import { MAILER_USER } from '../config/env.js'
 import { generateRandomCode } from '../utils/random.js'
+import { deleteFile } from '../utils/file.js'
 
 export const SignIn = async (req, res) => {
   try {
@@ -213,12 +213,11 @@ export const UpdateProfile = async (req, res) => {
 
     const oldProfileImageUrl = path.join(process.cwd(), user.imageUrl)
 
-    if (user.imageUrl && fs.existsSync(oldProfileImageUrl)) {
-      try {
-        fs.unlinkSync(oldProfileImageUrl)
-      } catch (e) {
-        console.error('[UpdateProfile] Error deleting user profile pic', e)
-      }
+    if (user.imageUrl) {
+      deleteFile(
+        oldProfileImageUrl,
+        '[UpdateProfile] Error deleting user profile pic'
+      )
     }
 
     Object.assign(user, {
@@ -265,6 +264,41 @@ export const Me = async (req, res) => {
       res,
       StatusCodes.BAD_REQUEST,
       'Error while getting profile information'
+    )
+  }
+}
+
+export const DeleteProfilePicture = async (req, res) => {
+  try {
+    const { email } = req
+
+    const user = await db.models.User.findOne({ where: { email } })
+
+    if (!user) {
+      return sendErrorResponse(res, StatusCodes.NOT_FOUND, 'User not found')
+    }
+
+    if (user.imageUrl) {
+      const imagePath = path.join(process.cwd(), user.imageUrl)
+      deleteFile(
+        imagePath,
+        '[DeleteProfilePicture] Error deleting user profile pic'
+      )
+
+      user.imageUrl = null
+
+      await user.save()
+    }
+
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: 'Profile picture deleted successfully' })
+  } catch (e) {
+    console.error('[DeleteProfilePicture]', e)
+    return sendErrorResponse(
+      res,
+      StatusCodes.BAD_REQUEST,
+      'Error while deleting profile picture'
     )
   }
 }
