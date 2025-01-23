@@ -10,6 +10,7 @@ import {
   verifyCodeValidation,
   updateProfileValidation
 } from '../validators/auth.js'
+import { upload } from '../config/multer.js'
 import * as AuthController from '../controllers/Auth.js'
 
 const router = new Router()
@@ -59,6 +60,7 @@ router.patch(
   jwtAuth,
   updateProfileValidation,
   validateRequestBody,
+  upload.single('profileImage'),
   AuthController.UpdateProfile
 )
 
