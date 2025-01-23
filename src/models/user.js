@@ -46,7 +46,7 @@ const modelDefiner = (sequelize) => {
       },
       imageUrl: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: true
       }
     },
     { tableName: 'user', timestamps: true }

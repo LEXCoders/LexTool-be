@@ -207,16 +207,16 @@ export const UpdateProfile = async (req, res) => {
       return sendErrorResponse(res, StatusCodes.NOT_FOUND, 'User not found')
     }
 
-    if(req.file) {
+    if (req.file) {
       imageUrl = `/uploads/profile-pics/${req.file.filename}`
     }
 
     const oldProfileImageUrl = path.join(process.cwd(), user.imageUrl)
 
-    if(user.imageUrl && fs.existsSync(oldProfileImageUrl)) {
-      try { 
+    if (user.imageUrl && fs.existsSync(oldProfileImageUrl)) {
+      try {
         fs.unlinkSync(oldProfileImageUrl)
-      } catch(e) {
+      } catch (e) {
         console.error('[UpdateProfile] Error deleting user profile pic', e)
       }
     }
@@ -251,7 +251,7 @@ export const Me = async (req, res) => {
 
     const userProfile = await db.models.User.findOne({
       where: { email },
-      attributes: ['id', 'firstName', 'lastName', 'email', 'role']
+      attributes: ['id', 'firstName', 'lastName', 'email', 'role', 'imageUrl']
     })
 
     if (!userProfile) {
