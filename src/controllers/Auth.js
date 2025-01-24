@@ -211,9 +211,9 @@ export const UpdateProfile = async (req, res) => {
       imageUrl = `/uploads/profile-pics/${req.file.filename}`
     }
 
-    const oldProfileImageUrl = path.join(process.cwd(), user.imageUrl)
-
     if (user.imageUrl) {
+      const oldProfileImageUrl = path.join(process.cwd(), user.imageUrl)
+
       deleteFile(
         oldProfileImageUrl,
         '[UpdateProfile] Error deleting user profile pic'
