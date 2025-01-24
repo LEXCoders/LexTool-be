@@ -65,5 +65,6 @@ router.patch(
 )
 
 router.get('/me', jwtAuth, AuthController.Me)
+router.delete('/profile-picture', jwtAuth, AuthController.DeleteProfilePicture)
 
 export default router
